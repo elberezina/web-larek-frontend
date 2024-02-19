@@ -38,8 +38,8 @@ export class Card extends Component<IProduct> {
 			`.${blockName}__category`,
 			container
 		);
-		this._price = container.querySelector(`.${blockName}__price`); //!! или квери??
-		this._description = container.querySelector(`.${blockName}__description`); //!! почему тут квери?
+		this._price = container.querySelector(`.${blockName}__price`);
+		this._description = container.querySelector(`.${blockName}__description`);
 		this._button = container.querySelector(`.${blockName}__button`);
 
 		if (actions?.onClick) {
@@ -54,9 +54,6 @@ export class Card extends Component<IProduct> {
 	set id(value: string) {
 		this.container.dataset.id = value;
 	}
-	get id(): string {
-		return this.container.dataset.id || '';
-	}
 
 	set image(value: string) {
 		this.setImage(this._image, value, this.title);
@@ -65,16 +62,13 @@ export class Card extends Component<IProduct> {
 	set title(value: string) {
 		this.setText(this._title, value);
 	}
-	get title(): string {
-		return this._title.textContent || '';
-	}
 
 	set category(value: string) {
 		this._category.textContent = value;
 		this._category.classList.add(this.categoryMapping[value]);
 	}
 
-	set price(value: number) {
+	set price(value: number | null) {
 		this.setText(
 			this._price,
 			value ? `${value.toString()} синапсов` : 'Бесценно'
@@ -90,16 +84,26 @@ export class Card extends Component<IProduct> {
 	}
 
 	set button(value: string) {
-		this.setText(this._button, value);
+		if (this._price.textContent === 'Бесценно') {
+			this._button.disabled = true;
+			this._button.textContent = 'Нельзя купить';
+		} else this.setText(this._button, value);
+	}
+
+	set selected(value: boolean) {
+		this._button.disabled = value;
+		if (value) {
+			this.button = 'Уже в корзине';
+		} else {
+			this.button = 'В корзину';
+		}
 	}
 }
 
-export class CardItemPreview extends Card {
+export class CardPreview extends Card {
 	protected _description: HTMLElement;
-
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super('card', container, actions);
-
 		this._description = container.querySelector(`.${this.blockName}__text`);
 	}
 

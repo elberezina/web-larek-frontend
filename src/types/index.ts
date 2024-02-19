@@ -13,10 +13,13 @@ export interface IProduct {
 	category: string;
 
 	// Цена товара
-	price: number;
+	price: number | null;
 
 	// Описание товара
 	description: string;
+
+	// Продукт выбран
+	selected: boolean;
 }
 
 // Интерфейс описывающий страницу
@@ -50,6 +53,9 @@ export interface IAppState {
 
 	// Удаляем товар из корзины
 	removeFromBasket(product: IProduct): void;
+
+	// Метод возвращает общую стоимость товаров в корзине
+	getTotalBasketPrice(): number;
 }
 
 // Интерфейс описывающий информацию о заказе
@@ -112,10 +118,34 @@ export interface IContactsForm {
 }
 
 // Интерфейс описывающий форму оплаты
-export interface IPaymentForm {
+export interface IOrderForm {
 	// Адрес
 	address: string;
 
 	// Способ оплаты
 	payment: string;
 }
+
+// Интерфейс используется для валидации полей при
+// заполнении модели заказа
+export interface IOrderValidate {
+	// Телефон
+	phone: string;
+
+	// Email
+	email: string;
+
+	// Адрес
+	address: string;
+
+	// Способ оплаты
+	payment: string;
+}
+
+// Интерфейс описывает форму успешного заказа
+export interface ISuccessForm {
+	// Количество списанных средств
+	description: number;
+}
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;

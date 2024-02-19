@@ -33,6 +33,19 @@ export class Basket extends Component<IBasket> {
 		this._list.replaceChildren(...items);
 		this._button.disabled = items.length ? false : true;
 	}
+
+	disableButton() {
+		this._button.disabled = true;
+	}
+
+	updateIndices() {
+		Array.from(this._list.children).forEach((item, index) => {
+			const indexInItem = item.querySelector(`.basket__item-index`);
+			if (indexInItem) {
+				indexInItem.textContent = (index + 1).toString();
+			}
+		});
+	}
 }
 
 export interface IProductItemBasketActions {
@@ -51,7 +64,6 @@ export class ProductItemBasket extends Component<IProductInBasket> {
 		actions?: IProductItemBasketActions
 	) {
 		super(container);
-
 		this._title = container.querySelector(`.${blockName}__title`);
 		this._index = container.querySelector(`.basket__item-index`);
 		this._price = container.querySelector(`.${blockName}__price`);
