@@ -1,5 +1,6 @@
 # Проектная работа "Веб-ларек"
 
+
 Стек: HTML, SCSS, TS, Webpack
 
 Структура проекта:
@@ -11,7 +12,7 @@
 - src/pages/index.html — HTML-файл главной страницы
 - src/types/index.ts — файл с типами
 - src/index.ts — точка входа приложения
-- src/styles/styles.scss — корневой файл стилей
+- src/scss/styles.scss — корневой файл стилей
 - src/utils/constants.ts — файл с константами
 - src/utils/utils.ts — файл с утилитами
 
@@ -41,354 +42,222 @@ npm run build
 yarn build
 ```
 
-## Описание проекта
-
-### Типы данных
-
-```TypeScript
-// Интерфейс осписывающий поля карточки товара
-export interface IProduct {
-	// Идентификатор товара в магазине
-	id: string;
-
-	// URL адрес картинки товара
-	image: string;
-
-	// Название товара
-	title: string;
-
-	// Категория товара
-	category: string;
-
-	// Цена товара
-	price: number;
-
-	// Описание товара
-	description: string;
-}
-
-// Интерфейс описывающий страницу
-export interface IPage {
-	// Счетчик товаров в корзине
-	counter: number;
-
-	// Массив карточек с товарами
-	catalog: HTMLElement[];
-
-	// Блокировка прокрутки страницы
-	locked: boolean;
-}
-
-// Интерфей описываюзий состояние приложения
-export interface IAppState {
-	// Каталог товаров
-	catalog: IProduct[];
-
-	// Корзина
-	basket: IProduct[];
-
-	// Заказ
-	order: IOrder | null;
-
-    // Устанавливаем каталог товаров
-    setCatalog(items: IProduct[]): void;
-
-    // Добавляем товар в корзину
-    addToBasket(product: IProduct): void;
-
-    // Удаляем товар из корзины
-    removeFromBasket(product: IProduct): void;
-}
-
-// Интерфейс описывающий информацию о заказе
-export interface IOrder {
-	// Массив идентификаторов купленных товаров
-	items: string[];
-
-	// Способ оплаты
-	payment: string;
-
-	// Сумма заказа
-	total: number;
-
-	// Адрес доставки
-	address: string;
-
-	// Email
-	email: string;
-
-	// Номер телефона
-	phone: string;
-}
-
-// Интерфейс описывающий ответ успешной покупки
-export interface IOrderResult {
-	// Идентификатор заказа
-	id: string;
-
-	// Сумма заказа
-	total: number;
-}
-
-// Интерфейс описывающий содержимое модельного окна
-export interface IModal {
-	content: HTMLElement;
-}
-
-// Интерфейс описывающий корзину товаров
-export interface IBasket {
-	// Массив строк с товарами
-	list: HTMLElement[];
-
-	// Общая цена товаров
-	total: number;
-}
-
-// Интерфейс описывает товар в списке корзины
-export interface IProductInBasket extends IProduct {
-	// Порядковый номер в корзине
-	index: number;
-}
-
-// Интерфейс описывает окно ввода контактных данных
-export interface IContactsForm {
-	// Телефон
-	phone: string;
-
-	// Email
-	email: string;
-}
-
-// Интерфейс описывающий форму оплаты
-export interface IPaymentForm {
-	// Адрес
-	address: string;
-
-	// Способ оплаты
-	payment: string;
-}
+## Основные типы данных
 
 ```
+interface IAppState - Интерфейс описывающий состояние приложения
+	catalog: IProduct[] - каталог товаров
+	basket: IProduct[] - корзина
+	order: IOrder | null - заказ
+	setCatalog(items: IProduct[]): void - устанавливаем каталог товаров 
+	addToBasket(product: IProduct): void - добавляем товар в корзину
+	removeFromBasket(product: IProduct): void - удаляем товар из корзины
 
-### Модели данных
+interface IModal - интерфейс описывающий содержимое модельного окна
+	content: HTMLElement - DOM-элемент модального окна
 
-```TypeScript
-/**
- * Базовая модель, чтобы можно было отличить ее от простых объектов с данными
- */
-export abstract class Model<T> {
-    constructor(data: Partial<T>, protected events: IEvents) {
-        Object.assign(this, data);
-    }
+interface IProduct  - интерфейс описывающий поля карточки товара
+	id: string - идентификатор товара в магазине
+	image: string - URL адрес картинки товара
+	title: string - название товара
+	category: string - категория товара
+	price: number - цена товара
+	description: string - описание товара
 
-    // Сообщить всем что модель поменялась
-    emitChanges(event: string, payload?: object) {
-        // Состав данных можно модифицировать
-        this.events.emit(event, payload ?? {});
-    }
-}
+interface IPage - интерфейс описывающий страницу
+	counter: number - счетчик товаров в корзине
+	catalog: HTMLElement[] - массив карточек с товарами
+	locked: boolean - блокировка прокрутки страницы
 
-// Класс хранит состояние приложения
-export class AppState extends Model<IAppState> {
+ interface IBasket - интерфейс описывающий корзину товаров
+	list: HTMLElement[] - массив строк с товарами
+	total: number - общая стоимость товаров
 
-	basket: Product[] = [];
-	catalog: Product[] = [];
-	order: IOrder = null;
+ interface IProductInBasket extends IProduct - Интерфейс описывает товар в списке корзины
+	index: number - порядковый номер в корзине
 
-	setCatalog(items: IProduct[]) {}
-    addToBasket(product: Product) {}
-    removeFromBasket(product: Product) {}
-}
+interface IOrder - интерфейс описывающий информацию о заказе
+	items: string[] - массив идентификаторов купленных товаров
+	payment: string - способ оплаты
+	total: number - сумма заказа
+	address: string - адрес доставки
+	email: string - Email
+	phone: string - номер телефона
+
+interface IContactsForm - Интерфейс описывает окно ввода контактных данных
+	phone: string - телефон
+	email: string - Email
+
+interface IPaymentForm - Интерфейс описывающий форму оплаты
+	address: string - адрес
+	payment: string - способ оплаты
+
+interface IOrderResult - Интерфейс описывающий ответ успешной покупки
+	id: string - идентификатор заказа
+	total: number - сумма заказа
 ```
 
-### Классы представления
-```TypeScript
+## Базовый код
 
-// Абстрактный класс компонента от которого все наследуются
-export abstract class Component<T> {
-	protected constructor(protected readonly container: HTMLElement) {}
+```
+class Api
+Это базовый класс,  который отвечает за работу с сервером. 
+Конструктор класса:
+	baseUrl: string - принимает базовый Url для доступа к серверу
+	options: RequestInit - опции для доступа к различным параметрам
 
-	// Инструментарий для работы с DOM в дочерних компонентах
+Реализует методы:
+	get(uri: string) - для получения данных с сервера
+	post(uri: string, data: object, method: ApiPostMethods = 'POST') - для отправки данных на сервер
+	handleResponse(response: Response): Promise<object> - обрабатывает ответ от сервера
 
-	// Переключить класс
-	toggleClass(element: HTMLElement, className: string, force?: boolean) {}
+class EventEmitter
+Реализует паттерн «Наблюдатель» и позволяет подписываться на события и уведомлять подписчиков о наступлении события. Имеет конструктор который инициализирует события и реализует следующие методы:
+	on  - установить обработчик на событие
+	off - снять обработчик с события
+	emit - инициировать событие с данными
+	onAll - слушать все события
+	offAll - сбросить все обработчики
+	trigger - создает коллбек триггер, генерирующий событие при вызов
 
-	// Установить текстовое содержимое
-	protected setText(element: HTMLElement, value: unknown) {}
+abstract class Component<T> 
+Это базовый абстрактный класс,  который является основой для компонентов проекта. 
+Конструктор класса:
+	constructor(protected readonly container: HTMLElement) - принимает DOM элемент для работы в дочерних компонентах
 
-	// Сменить статус блокировки
-	setDisabled(element: HTMLElement, state: boolean) {}
+Реализует следующие методы:
+	toggleClass(element: HTMLElement, className: string, force?: boolean) - используем для переключения класса компонента
+	protected setText(element: HTMLElement, value: unknown) - устанавливает текстовое содержимое
+	setDisabled(element: HTMLElement, state: boolean) - определяет нужна блокировка или нет
+	setHidden(element: HTMLElement) - скрывает элемент
+	setVisible(element: HTMLElement) - показывает элемент удаляя свойство display = 'none'
+	setImage(element: HTMLImageElement, src: string, alt?: string) - устанавливает изображение с альтернативным текстом. 
+	render(data?: Partial<T>): HTMLElement - возвращает корневой  DOM-элемент.
 
-	// Скрыть
-	protected setHidden(element: HTMLElement) {}
+abstract class Model<T>
+Это абстрактный класс, базовая модель, чтобы можно было отличить ее от простых объектов с данными. 
+Конструктор:
+	constructor(data: Partial<T>, protected events: IEvents) - принимает данные и событие
 
-	// Показать
-	protected setVisible(element: HTMLElement) {}
-
-	// Установить изображение с алтернативным текстом
-	protected setImage(element: HTMLImageElement, src: string, alt?: string) {}
-
-	// Вернуть корневой DOM-элемент
-	render(data?: Partial<T>): HTMLElement {}
-}
-
-// Класс для описания страницы сайта
-export class Page extends Component<IPage> {
-	protected _counter: HTMLElement;
-	protected _catalog: HTMLElement;
-	protected _wrapper: HTMLElement;
-	protected _basket: HTMLElement;
-
-	constructor(container: HTMLElement, protected events: IEvents) {}
-	set counter(value: number) {}
-	set catalog(items: HTMLElement[]) {}
-	set locked(value: boolean) {}
-}
-
-// Класс описывает компоненту карточки товара
-export class Card extends Component<IProduct> {
-	protected _image: HTMLImageElement;
-	protected _title: HTMLElement;
-	protected _category: HTMLElement;
-	protected _price: HTMLElement;
-	protected _description: HTMLElement;
-	protected _button?: HTMLButtonElement;
-
-	categoryMapping: { [key: string]: string } = {
-		'софт-скил': 'card__category_soft',
-		другое: 'card__category_other',
-		'хард-скил': 'card__category_hard',
-		дополнительное: 'card__category_additional',
-		кнопка: 'card__category_button',
-	};
-
-	constructor(
-		protected blockName: string,
-		container: HTMLElement,
-		actions?: ICardActions
-	) {}
-
-	set id(value: string) {}
-	get id(): string {}
-	set image(value: string) {}
-	set title(value: string) {}
-	get title(): string {}
-	set category(value: string) {}
-	set price(value: number) {}
-	get price(): number {}
-	set description(value: string) {}
-	set button(value: string) {}
-}
-
-// Класс описывает карточку товара в модальном окне
-export class CardItemPreview extends Card {
-	protected _description: HTMLElement;
-	constructor(container: HTMLElement, actions?: ICardActions) {}
-	set description(value: string) {}
-}
-
-// Класс описывает карточку корзины
-export class Basket extends Component<IBasket> {
-	protected _list: HTMLElement;
-	protected _total: HTMLElement;
-	protected _button: HTMLButtonElement;
-
-	constructor(
-		protected blockName: string,
-		container: HTMLElement,
-		protected events: IEvents
-	) {}
-
-	set total(price: number) {}
-	set list(items: HTMLElement[]) {}
-}
-
-// Класс описывает форму ввода контактных данных
-export class ContactsForm extends Form<IContactsForm> {
-	constructor(container: HTMLFormElement, events: IEvents) {}
-}
-
-// Класс описывает форму оплаты товара
-export class PaymentForm extends Form<IPaymentForm> {
-	protected _card: HTMLButtonElement;
-	protected _onReceipt: HTMLButtonElement;
-	constructor(
-		protected blockName: string,
-		container: HTMLFormElement,
-		protected events: IEvents
-	) {}
-}
+Реализует метод:
+	emitChanges(event: string, payload?: object) - сообщает всем что модель поменялась
 ```
 
-### Взаимодействие 
 
-```TypeScript
-// Реализует паттерн «Наблюдатель» и позволяет подписываться на события и 
-// уведомлять подписчиков о наступлении события. Имеет конструктор который инициализирует события
-export class EventEmitter implements IEvents {
-    _events: Map<EventName, Set<Subscriber>>;
-    constructor() {}
 
-    /**
-     * Установить обработчик на событие
-     */
-    on<T extends object>(eventName: EventName, callback: (event: T) => void) {}
+## Компоненты модели данных
 
-    /**
-     * Снять обработчик с события
-     */
-    off(eventName: EventName, callback: Subscriber) {}
+```class LarekAPI 
+Класс наследуется от базового класса Api, позволяет получить список карточек с сервера и необходимую информацию по каждой карточке для дальнейшего использования в галлерее и в оформлении заказа. 
+Имеет методы:
+	getProductById - получить продукт по ID
+	getProductList- получить список продуктов
 
-    /**
-     * Инициировать событие с данными
-     */
-    emit<T extends object>(eventName: string, data?: T) {}
+class AppState 
+Класс наследуется от базового класса Model и расширяется интерфейсом IAppState.  Данный класс хранит состояние приложения.
+Класс принимает следующую информацию:
+	basket: Product[] - список товаров в корзине
+	catalog: Product[] - каталог товаров
+	order: IOrder - заказ
 
-    /**
-     * Слушать все события
-     */
-    onAll(callback: (event: EmitterEvent) => void) {}
-
-    /**
-     * Сбросить все обработчики
-     */
-    offAll() {}
-
-    /**
-     * Сделать коллбек триггер, генерирующий событие при вызове
-     */
-    trigger<T extends object>(eventName: string, context?: Partial<T>) {}
-}
-
-// Это базовый класс,  который отвечает за работу с сервером. Конструктор класса принимает 
-// базовый Url для доступа к серверу и опции для доступа к различным параметрам. 
-export class Api {
-	readonly baseUrl: string;
-	protected options: RequestInit;
-
-	constructor(baseUrl: string, options: RequestInit = {}) {}
-
-    // Обработчик ответа от сервера
-	protected handleResponse(response: Response): Promise<object> {}
-
-    // Используется для получения данных с сервера
-	get(uri: string) {}
-
-    // Используется для отправки данных на сервер
-	post(uri: string, data: object, method: ApiPostMethods = 'POST') {}
-}
-
-// Класс наследуется от базового класса Api, позволяет получить список карточек с 
-// сервера и необходимую информацию по каждой карточке для дальнейшего использования 
-// в галлереи и в оформлении заказа
-export class LarekAPI extends Api implements ILarekAPI {
-	readonly cdn: string;
-	constructor(cdn: string, baseUrl: string, options?: RequestInit) {}
-
-    // Получить продукт по ID
-	getProductById(id: string): Promise<IProduct> {}
-
-    // Получить список продуктов
-	getProductList(): Promise<IProduct[]> {}
-}
+Методы класса:
+	setCatalog(items: IProduct[]) - устанавливает каталог продуктов
+	addToBasket(product: Product) - добавляет продукт в корзину 
+	removeFromBasket(product: Product) - удаляет продукт из корзины
 ```
+
+## Компоненты представления
+
+```
+class Page 
+Класс для отображения главной страницы. Наследуется от базового класса Component и расширяется интерфейсом IPage. 
+Класс загружает каталог товаров на главную страницу, учитывает количество товаров в корзине и отражает информацию на иконке корзины. При открытии модального окна, страница блокируется. 
+Класс принимает информацию:
+	counter: HTMLElement - DOM элемент счетчика товаров в корзине
+	catalog: HTMLElement - DOM элемент каталога товаров
+	wrapper: HTMLElement - DOM элемент главной страницы
+	basket: HTMLElement - DOM элемент корзины
+
+Конструктор класса: 
+	container: HTMLElement - DOM элемент всей страницы
+	events: IEvents - ссылка на объект, который имплиментирует интерфейс IEvents, в нашем случае это объект класса EventEmmiter, для того чтобы компонент мог создавать события и подписываться 			на них. Например, чтобы обновлять данные на главной странице.
+
+Методы класса:
+	set counter(value: number) - устанавливает счетчик на иконке корзины
+	set catalog(items: HTMLElement[]) - устанавливает каталог товаров
+	set locked(value: boolean) - при открытие модального окна страница блокируется
+
+
+class Card
+Класс описывает компоненту карточки товара, наследуется от базового класса Component и расширяется интерфейсом IProduct. Данные класс служит для отображения карточки и информации по ней в галлереи товаров, просмотре карточки товара и корзине. Класс принимает необходимую для заполнения карточки информацию:
+	image: HTMLImageElement DOM элемент изображения продукта
+	title: HTMLElement DOM элемент названия продукта
+	category: HTMLElement; DOM элемент категории продукта
+	price: HTMLElement; DOM элемент цены продукта
+	description: HTMLElement; DOM элемент описание продукта
+	button?: HTMLButtonElement; DOM элемент кнопки продукта
+
+Конструктор класса принимает: 
+blockName - имя блока 
+HTMLElement - DOM элемент карточки товара 
+ICardActions - действия с карточкой
+
+Методы класса:
+	set id - устанавливает  Id товара
+	set Image - устанавливает картинку товара
+	set title - устанавливает название товара
+	set category - устанавливает категорию товара
+	set price -  устанавливает цену товара
+	set description -  устанавливает описание товара
+	set button - устанавливает название кнопки
+
+
+class CardItemPreview 
+Класс наследуется от класса Card. Класс описывает карточку товара при открытии в модальном окне. Класс принимает 
+	description: HTMLElement - DOM элемент описания карточки товара.
+
+Конструктор класса
+	container: HTMLElement -  DOM элемент карточки товара 
+	actions?: ICardActions - действия с карточкой
+
+Метод класса:
+	set description(value: string) - устанавливает описание товара
+
+
+class Basket 
+Класс наследуется от базового класса Component и расширяется интерфейсом IBasket. Отвечает за работу с корзиной, отражает информацию по товарам в корзине, стоимости каждой единицы товара, дает возможность удалить товар из корзины, считает и показывает общую сумму заказа. 
+Класс принимает информацию:
+	list: HTMLElement - список товаров в корзине
+	total: HTMLElement - общая стоимость товаров в корзине
+	button: HTMLButtonElement - кнопка корзины оформления заказа
+
+Конструктор класса принимает: 
+	blockName - имя блока
+	container: DOM элемент компонента корзины
+	events - ссылка на объект, который имплиментирует интерфейс IEvents, в нашем случае это объект класса EventEmmiter, для того чтобы компонент мог создавать события и подписываться на них. 			Например, для удаления товара из корзины и запуска процесса оформления заказа
+
+Методы класса:
+	set total(price: number) - отражает итоговую стоимость товаров в корзине
+	set list(items: HTMLElement) - отражает содержимое корзины
+
+
+class PaymentForm 
+Класс наследуется от базового класса Form и расширяется интерфейсом IPaymentForm. Класс описывает форму оплаты товара при оформлении заказа.
+Класс принимает информацию:
+	card: HTMLButtonElement - оплата заказа картой
+	onReceipt: HTMLButtonElement -  оплата заказа при получении
+
+Конструктор класса принимает: 
+	blockName: string - имя блока
+	container: DOM - элемент формы оплаты
+	events - ссылка на объект, который имплиментирует интерфейс IEvents, в нашем случае это объект класса EventEmmiter, для того чтобы компонент мог создавать события и подписываться на них. 			Например, для чтобы обновлять данные модели, где храниться информация о способе платежа или для взаимодействия с другими компонентами.
+ 
+
+class ContactsForm 
+Класс наследуется от базового класса Form и расширяется интерфейсом IContactsForm. Класс описывает форму ввода контактных данных.
+Класс принимает информацию:
+	container: HTMLFormElement - компонент формы
+	events -  ссылка на объект, который имплиментирует интерфейс IEvents, в нашем случае это объект класса EventEmmiter, для того чтобы компонент мог создавать события и подписываться на них. 			Например, для чтобы обновлять данные модели, где храниться информация о контактных данных по заказу.
+```
+
+
