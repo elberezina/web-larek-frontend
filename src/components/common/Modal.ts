@@ -1,6 +1,6 @@
-import { Component } from './Component';
+import { Component } from '../base/Component';
 import { ensureElement } from '../../utils/utils';
-import { IEvents } from './events';
+import { IEvents } from '../base/events';
 import { IModal } from '../../types';
 
 export class Modal extends Component<IModal> {

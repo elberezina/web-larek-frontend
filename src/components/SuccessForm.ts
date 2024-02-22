@@ -1,5 +1,5 @@
-import { ISuccessForm } from '../../types';
-import { Component } from '../base/Component';
+import { ISuccessForm } from '../types';
+import { Component } from './base/Component';
 
 interface ISuccessActions {
 	onClick: (event: MouseEvent) => void;

@@ -2,21 +2,21 @@ import './scss/styles.scss';
 import { API_URL, CDN_URL } from './utils/constants';
 import { EventEmitter } from './components/base/events';
 import { ensureElement, cloneTemplate } from './utils/utils';
-import { Page } from './components/base/Page';
-import { LarekAPI } from './components/common/LarekAPI';
-import { Card, CardPreview } from './components/common/Card';
-import { AppState, Product } from './components/common/AppState';
-import { Modal } from './components/base/Modal';
-import { Basket, ProductItemBasket } from './components/common/Basket';
-import { OrderForm } from './components/common/OrderForm';
+import { Page } from './components/Page';
+import { LarekAPI } from './components/LarekAPI';
+import { Card, CardPreview } from './components/Card';
+import { AppState, Product } from './components/AppState';
+import { Modal } from './components/common/Modal';
+import { Basket, ProductItemBasket } from './components/Basket';
+import { OrderForm } from './components/OrderForm';
 import {
 	IContactsForm,
 	IOrderForm,
 	IOrderResult,
 	IOrderValidate,
 } from './types';
-import { ContactsForm } from './components/common/ContactsForm';
-import { SuccessForm } from './components/common/SuccessForm';
+import { ContactsForm } from './components/ContactsForm';
+import { SuccessForm } from './components/SuccessForm';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
@@ -67,7 +67,12 @@ events.on('card:select', (product: Product) => {
 		cloneTemplate(cardPreviewTemplate),
 		{
 			onClick: () => {
-				events.emit('card:addToBasket', product);
+				if (product.selected) {
+					events.emit('basket:removeFromBasket', product);
+				} else {
+					events.emit('card:addToBasket', product);
+				}
+				productItemPreview.updateButton(product.selected);
 			},
 		}
 	);
@@ -88,7 +93,6 @@ events.on('card:addToBasket', (product: Product) => {
 	appData.addToBasket(product);
 	product.selected = true;
 	page.counter = appData.getCountProductInBasket();
-	modal.close();
 });
 
 events.on('basket:removeFromBasket', (product: Product) => {

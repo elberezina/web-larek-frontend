@@ -1,11 +1,11 @@
-import { Model } from '../base/Model';
+import { Model } from './base/Model';
 import {
 	FormErrors,
 	IAppState,
 	IOrder,
 	IOrderValidate,
 	IProduct,
-} from '../../types';
+} from '../types/index';
 
 export class Product extends Model<IProduct> {
 	id: string;

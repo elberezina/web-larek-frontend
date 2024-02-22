@@ -1,6 +1,6 @@
-import { Component } from '../base/Component';
-import { ensureElement } from '../../utils/utils';
-import { IProduct } from '../../types';
+import { Component } from './base/Component';
+import { ensureElement } from '../utils/utils';
+import { IProduct } from '../types';
 
 interface ICardActions {
 	onClick: (event: MouseEvent) => void;
@@ -91,9 +91,12 @@ export class Card extends Component<IProduct> {
 	}
 
 	set selected(value: boolean) {
-		this._button.disabled = value;
-		if (value) {
-			this.button = 'Уже в корзине';
+		this.updateButton(value);
+	}
+
+	updateButton(selected: boolean) {
+		if (selected) {
+			this.button = 'Убрать из корзины';
 		} else {
 			this.button = 'В корзину';
 		}

@@ -1,6 +1,6 @@
-import { IBasket, IProductInBasket } from '../../types';
-import { Component } from '../base/Component';
-import { IEvents } from '../base/events';
+import { IBasket, IProductInBasket } from '../types';
+import { Component } from './base/Component';
+import { IEvents } from './base/events';
 
 export class Basket extends Component<IBasket> {
 	protected _list: HTMLElement;
