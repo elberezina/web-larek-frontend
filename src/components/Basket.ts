@@ -26,16 +26,16 @@ export class Basket extends Component<IBasket> {
 	}
 
 	set total(price: number) {
-		this._total.textContent = price + ' синапсов';
+		this.setText(this._button, price + ' синапсов');
 	}
 
 	set list(items: HTMLElement[]) {
 		this._list.replaceChildren(...items);
-		this._button.disabled = items.length ? false : true;
+		this.toggleButton(items.length ? false : true);
 	}
 
-	disableButton() {
-		this._button.disabled = true;
+	toggleButton(isDisabled: boolean) {
+		this._button.disabled = isDisabled;
 	}
 
 	updateIndices() {
@@ -78,14 +78,14 @@ export class ProductItemBasket extends Component<IProductInBasket> {
 	}
 
 	set title(value: string) {
-		this._title.textContent = value;
+		this.setText(this._title, value);
 	}
 
 	set index(value: number) {
-		this._index.textContent = value.toString();
+		this.setText(this._index, value);
 	}
 
 	set price(value: number) {
-		this._price.textContent = value + ' синапсов';
+		this.setText(this._price, value + ' синапсов');
 	}
 }

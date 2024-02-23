@@ -14,7 +14,7 @@ export class Product extends Model<IProduct> {
 	title: string;
 	category: string;
 	status: boolean;
-	price: number;
+	price: number | null;
 	selected: boolean;
 }
 

@@ -64,7 +64,7 @@ export class Card extends Component<IProduct> {
 	}
 
 	set category(value: string) {
-		this._category.textContent = value;
+		this.setText(this._category, value);
 		this._category.classList.add(this.categoryMapping[value]);
 	}
 
@@ -86,7 +86,7 @@ export class Card extends Component<IProduct> {
 	set button(value: string) {
 		if (this._price.textContent === 'Бесценно') {
 			this._button.disabled = true;
-			this._button.textContent = 'Нельзя купить';
+			this.setText(this._button, 'Нельзя купить');
 		} else this.setText(this._button, value);
 	}
 
@@ -111,6 +111,6 @@ export class CardPreview extends Card {
 	}
 
 	set description(value: string) {
-		this._description.textContent = value;
+		this.setText(this._description, value);
 	}
 }

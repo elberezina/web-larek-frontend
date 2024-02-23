@@ -102,7 +102,7 @@ events.on('basket:removeFromBasket', (product: Product) => {
 	page.counter = appData.getCountProductInBasket();
 	basket.updateIndices();
 	if (appData.getCountProductInBasket() == 0) {
-		basket.disableButton();
+		basket.toggleButton(true);
 	}
 });
 

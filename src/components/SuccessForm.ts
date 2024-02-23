@@ -1,4 +1,5 @@
 import { ISuccessForm } from '../types';
+import { ensureElement } from '../utils/utils';
 import { Component } from './base/Component';
 
 interface ISuccessActions {
@@ -15,9 +16,14 @@ export class SuccessForm extends Component<ISuccessForm> {
 		actions?: ISuccessActions
 	) {
 		super(container);
-
-		this._button = container.querySelector(`.${blockName}__close`);
-		this._description = container.querySelector(`.${blockName}__description`);
+		this._button = ensureElement<HTMLButtonElement>(
+			`.${blockName}__close`,
+			container
+		);
+		this._description = ensureElement<HTMLElement>(
+			`.${blockName}__description`,
+			container
+		);
 
 		if (actions?.onClick) {
 			if (this._button) {
@@ -27,6 +33,6 @@ export class SuccessForm extends Component<ISuccessForm> {
 	}
 
 	set description(value: number) {
-		this._description.textContent = 'Списано ' + value + ' синапсов';
+		this.setText(this._description, 'Списано ' + value + ' синапсов');
 	}
 }
